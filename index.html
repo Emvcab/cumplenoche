@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis 15 – Disco Noche</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#060410;--gold:#f5c842;--pink:#ff2d78;
+  --cyan:#00e5ff;--purple:#c44fff;--white:#f0eeff;--mid:#8877bb;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Montserrat',sans-serif;color:var(--white);cursor:none;position:relative}
+
+/* ── FONDO ANIMADO ── */
+#bg{position:fixed;inset:0;z-index:0;background:var(--black);overflow:hidden}
+
+/* disco ball rays */
+.ray{position:absolute;top:50%;left:50%;width:2px;transform-origin:0 0;opacity:0;animation:rayAnim var(--d) var(--delay) ease-in-out infinite}
+@keyframes rayAnim{0%,100%{opacity:0;transform:rotate(var(--rot)) scaleY(0)}20%{opacity:.6}50%{opacity:.15}60%{opacity:.7}80%{opacity:0}}
+
+/* bokeh circles */
+.bk{position:absolute;border-radius:50%;filter:blur(60px);animation:bkMove var(--d) ease-in-out infinite alternate}
+@keyframes bkMove{from{transform:translate(0,0) scale(1)}to{transform:translate(var(--tx),var(--ty)) scale(1.3)}}
+
+/* glitter particles */
+#glitter{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+/* disco ball */
+#dball{position:fixed;top:-60px;left:50%;transform:translateX(-50%);width:120px;height:120px;z-index:2;pointer-events:none;animation:dballSway 4s ease-in-out infinite alternate}
+@keyframes dballSway{from{transform:translateX(-55%) rotate(-3deg)}to{transform:translateX(-45%) rotate(3deg)}}
+.ball-inner{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0%,#ccc 20%,#888 50%,#444 80%,#111 100%);box-shadow:0 0 30px rgba(255,255,255,.3);position:relative;overflow:hidden}
+.ball-tile{position:absolute;width:12px;height:8px;background:rgba(255,255,255,.8);transform-origin:center}
+.ball-string{position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:2px;height:80px;background:linear-gradient(var(--gold),rgba(240,192,64,.3))}
+
+/* ── CONTENIDO PRINCIPAL ── */
+#page{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;overflow-y:auto}
+
+.logo-top{font-size:10px;letter-spacing:.7em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;opacity:0;animation:fadeIn .8s .3s forwards}
+
+.title-15{font-family:'Bebas Neue',sans-serif;font-size:clamp(90px,20vw,150px);line-height:.85;letter-spacing:.08em;background:linear-gradient(180deg,#fff 0%,var(--gold) 40%,rgba(240,192,64,.4) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(240,192,64,.5));opacity:0;animation:fadeIn 1s .5s forwards}
+
+.subtitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(14px,4vw,22px);letter-spacing:.5em;color:var(--pink);margin-top:-4px;opacity:0;animation:fadeIn .8s .8s forwards;text-shadow:0 0 20px rgba(255,45,120,.6)}
+
+.name{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,9vw,72px);font-style:italic;font-weight:300;color:var(--white);margin:8px 0;opacity:0;animation:fadeIn 1s 1s forwards;text-shadow:0 0 30px rgba(255,255,255,.15)}
+
+.gold-line{width:260px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),var(--pink),var(--gold),transparent);margin:14px auto;opacity:0;animation:fadeIn .8s 1.2s forwards}
+
+/* info strip */
+.info-strip{display:flex;gap:0;margin:12px 0;opacity:0;animation:fadeIn .8s 1.4s forwards;flex-wrap:wrap;justify-content:center}
+.info-item{padding:10px 20px;border:1px solid rgba(240,192,64,.25);background:rgba(6,4,16,.6);backdrop-filter:blur(10px);text-align:center;min-width:100px}
+.info-item:not(:last-child){border-right:none}
+.ii-label{font-size:8px;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:4px}
+.ii-val{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--white);line-height:1.3}
+
+/* countdown */
+.cd-wrap{display:flex;gap:8px;margin:14px 0;opacity:0;animation:fadeIn .8s 1.6s forwards}
+.cdb{text-align:center;background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.3);padding:10px 14px;min-width:58px}
+.cn{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);line-height:1;text-shadow:0 0 15px rgba(240,192,64,.5)}
+.cl{font-size:8px;letter-spacing:.3em;color:var(--mid);text-transform:uppercase}
+
+/* buttons */
+.btns{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeIn .8s 1.8s forwards}
+.btn-confirm{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;padding:14px 28px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:400;letter-spacing:.35em;text-transform:uppercase;cursor:none;transition:opacity .3s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn-confirm:hover{opacity:.85}
+.btn-map{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:14px 28px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:400;letter-spacing:.35em;text-transform:uppercase;cursor:none;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn-map:hover{background:var(--gold);color:var(--black)}
+
+/* music button */
+#mbtn{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--pink);border:none;color:#fff;font-size:20px;cursor:none;z-index:700;box-shadow:0 0 20px rgba(255,45,120,.5);display:flex;align-items:center;justify-content:center;transition:all .3s}
+#mbtn.playing{animation:mglow 1.5s ease-in-out infinite;background:var(--purple)}
+@keyframes mglow{0%,100%{box-shadow:0 0 20px rgba(180,79,255,.5)}50%{box-shadow:0 0 50px rgba(180,79,255,.9),0 0 80px rgba(255,45,120,.4)}}
+#mlbl{position:fixed;bottom:32px;right:82px;background:rgba(6,4,16,.9);border:1px solid var(--gold);color:var(--gold);font-size:9px;letter-spacing:.3em;text-transform:uppercase;padding:7px 12px;pointer-events:none;z-index:699;opacity:0;transition:opacity .3s;white-space:nowrap}
+#mlbl.show{opacity:1}
+
+/* cursor */
+#cur{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--gold);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen}
+#cur-ring{position:fixed;width:32px;height:32px;border-radius:50%;border:1px solid var(--pink);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .12s ease}
+
+/* share */
+.share-btn{display:inline-flex;align-items:center;gap:8px;background:#25d366;color:#fff;text-decoration:none;padding:13px 24px;font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;transition:opacity .3s;cursor:none}
+.share-btn:hover{opacity:.85}
+
+/* modal rsvp */
+#modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(6,4,16,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+#modal.open{display:flex;animation:fadeIn .3s}
+.modal-box{background:#0e0b1e;border:1px solid rgba(240,192,64,.3);max-width:440px;width:100%;padding:40px 32px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--pink),var(--gold),var(--cyan))}
+.modal-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--gold);font-size:24px;cursor:none}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.15em;background:linear-gradient(135deg,var(--gold),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:24px}
+.mf{display:flex;flex-direction:column;gap:12px}
+.mf label{font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:4px}
+.mf input,.mf select,.mf textarea{width:100%;padding:12px 14px;border:1px solid rgba(240,192,64,.3);background:rgba(255,255,255,.04);font-family:'Montserrat',sans-serif;font-size:12px;color:var(--white);outline:none;transition:border-color .3s;resize:none}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--gold)}
+.mf select option{background:#0e0b1e}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-send{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;padding:15px;font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:.35em;text-transform:uppercase;cursor:none;width:100%;transition:opacity .3s}
+.btn-send:hover{opacity:.85}
+#rsvp-ok{display:none;text-align:center;padding:20px}
+#rsvp-ok .oi{font-size:48px;margin-bottom:12px}
+#rsvp-ok p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;color:var(--gold)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:480px){
+  .info-item{min-width:80px;padding:8px 12px}
+  .info-item:not(:last-child){border-right:1px solid rgba(240,192,64,.25);border-bottom:none}
+  .btns{flex-direction:column;align-items:center}
+  .mrow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- FONDO -->
+<div id="bg">
+  <div class="bk" style="width:400px;height:400px;background:rgba(180,79,255,.18);top:-100px;left:-100px;--d:12s;--tx:60px;--ty:40px"></div>
+  <div class="bk" style="width:350px;height:350px;background:rgba(255,45,120,.12);bottom:-80px;right:-80px;--d:9s;--tx:-50px;--ty:-30px"></div>
+  <div class="bk" style="width:250px;height:250px;background:rgba(0,229,255,.1);top:40%;left:5%;--d:14s;--tx:40px;--ty:-60px"></div>
+  <div class="bk" style="width:200px;height:200px;background:rgba(240,192,64,.08);top:20%;right:5%;--d:11s;--tx:-30px;--ty:50px"></div>
+</div>
+<canvas id="glitter"></canvas>
+
+<!-- DISCO BALL -->
+<div id="dball">
+  <div class="ball-string"></div>
+  <div class="ball-inner" id="ball-inner"></div>
+</div>
+
+<!-- PÁGINA PRINCIPAL (todo en una sola pantalla) -->
+<div id="page">
+  <div class="logo-top">✦ Una noche especial ✦</div>
+
+  <div class="title-15">15</div>
+  <div class="subtitle">Disco Noche</div>
+  <div class="name">Valentina</div>
+
+  <div class="gold-line"></div>
+
+  <div class="info-strip">
+    <div class="info-item"><div class="ii-label">Fecha</div><div class="ii-val">Sáb 14 Jun<br>2025</div></div>
+    <div class="info-item"><div class="ii-label">Hora</div><div class="ii-val">20:30 hs<br>Recepción 20:00</div></div>
+    <div class="info-item"><div class="ii-label">Lugar</div><div class="ii-val">Salón Versailles<br>Av. Belgrano 1250</div></div>
+    <div class="info-item"><div class="ii-label">Dress Code</div><div class="ii-val">Brillos<br>& Elegante</div></div>
+  </div>
+
+  <div class="cd-wrap">
+    <div class="cdb"><div class="cn" id="cd-d">--</div><div class="cl">días</div></div>
+    <div class="cdb"><div class="cn" id="cd-h">--</div><div class="cl">horas</div></div>
+    <div class="cdb"><div class="cn" id="cd-m">--</div><div class="cl">min</div></div>
+    <div class="cdb"><div class="cn" id="cd-s">--</div><div class="cl">seg</div></div>
+  </div>
+
+  <div class="btns">
+    <button class="btn-confirm" onclick="openModal()">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      Confirmar asistencia
+    </button>
+    <a class="btn-map" href="https://maps.google.com/?q=Av.+Belgrano+1250+Santiago+del+Estero" target="_blank">
+      📍 Cómo llegar
+    </a>
+    <a class="share-btn" href="https://api.whatsapp.com/send?text=Te+invito+a+los+15+de+Valentina+🪩" target="_blank">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.26 5.26 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.533 5.851L.053 23.947a.5.5 0 00.608.608l6.097-1.48A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.88 9.88 0 01-5.039-1.374l-.361-.214-3.741.981.998-3.641-.235-.374A9.859 9.859 0 012.118 12C2.118 6.538 6.538 2.118 12 2.118c5.463 0 9.882 4.42 9.882 9.882 0 5.463-4.419 9.882-9.882 9.882z"/></svg>
+      Compartir
+    </a>
+  </div>
+</div>
+
+<!-- MUSIC -->
+<button id="mbtn" onclick="toggleMusic()">🎵</button>
+<div id="mlbl">♪ Tocá para escuchar</div>
+<div style="position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;pointer-events:none;">
+  <iframe id="yt-player" src="" allow="autoplay" style="width:1px;height:1px;border:none;"></iframe>
+</div>
+
+<!-- MODAL RSVP -->
+<div id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Confirmá tu asistencia</div>
+    <div id="rsvp-wrap">
+      <div class="mf">
+        <div><label>Tu nombre completo</label><input type="text" id="rn" placeholder="Ej: María González"></div>
+        <div class="mrow">
+          <div><label>¿Asistís?</label>
+            <select id="ra"><option value="">Seleccioná...</option><option value="si">✅ Sí, voy</option><option value="no">❌ No puedo</option></select>
+          </div>
+          <div><label>Personas</label>
+            <select id="rq"><option value="1">1 persona</option><option value="2">2 personas</option><option value="3">3 personas</option></select>
+          </div>
+        </div>
+        <div><label>Restricciones alimenticias</label><input type="text" id="rf" placeholder="Opcional"></div>
+        <div><label>Mensaje para Valentina</label><textarea id="rm" rows="3" placeholder="Escribile algo especial..."></textarea></div>
+        <button class="btn-send" onclick="submitRsvp()">Enviar confirmación 🪩</button>
+      </div>
+    </div>
+    <div id="rsvp-ok"><div class="oi">🪩</div><p id="rom">¡Gracias! Tu asistencia fue confirmada.</p></div>
+  </div>
+</div>
+
+<script>
+/* cursor */
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+document.addEventListener('mousemove',e=>{
+  cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';
+  ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';
+});
+
+/* disco ball tiles */
+(()=>{
+  const b=document.getElementById('ball-inner');
+  for(let i=0;i<40;i++){
+    const t=document.createElement('div');
+    t.className='ball-tile';
+    const angle=Math.random()*360,dist=Math.random()*45;
+    const x=50+dist*Math.cos(angle*Math.PI/180);
+    const y=50+dist*Math.sin(angle*Math.PI/180);
+    const h=Math.random()*360;
+    t.style.cssText=`left:${x}%;top:${y}%;width:${8+Math.random()*8}px;height:${6+Math.random()*6}px;transform:rotate(${Math.random()*360}deg);background:hsla(${h},80%,80%,${.5+Math.random()*.5});border-radius:1px`;
+    b.appendChild(t);
+  }
+  let ang=0;
+  setInterval(()=>{ang+=.5;b.style.transform=`rotate(${ang}deg)`;},30);
+})();
+
+/* glitter canvas */
+const gc=document.getElementById('glitter'),gx=gc.getContext('2d');
+function grsz(){gc.width=innerWidth;gc.height=innerHeight}grsz();
+window.addEventListener('resize',grsz);
+const COLS=['#f5c842','#ff2d78','#00e5ff','#c44fff','#ffffff','#ffaacc'];
+let gpts=[];
+for(let i=0;i<120;i++)gpts.push({
+  x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+  r:Math.random()*1.8+.3,spd:Math.random()*.5+.1,
+  drift:(Math.random()-.5)*.4,
+  col:COLS[Math.floor(Math.random()*COLS.length)],
+  alpha:Math.random()*.7+.1,
+  pulse:Math.random()*Math.PI*2,
+  twinkle:Math.random()*.05+.01
+});
+(function loop(){
+  gx.clearRect(0,0,gc.width,gc.height);
+  gpts.forEach(p=>{
+    p.pulse+=p.twinkle;p.y-=p.spd;p.x+=p.drift;
+    if(p.y<-5){p.y=gc.height+5;p.x=Math.random()*gc.width;}
+    const a=p.alpha*(0.5+0.5*Math.sin(p.pulse));
+    gx.save();gx.globalAlpha=a;gx.fillStyle=p.col;
+    // cross/star shape para algunos
+    if(p.r>1.2){
+      gx.beginPath();
+      gx.moveTo(p.x-p.r*2,p.y);gx.lineTo(p.x+p.r*2,p.y);
+      gx.moveTo(p.x,p.y-p.r*2);gx.lineTo(p.x,p.y+p.r*2);
+      gx.strokeStyle=p.col;gx.lineWidth=p.r*.6;gx.globalAlpha=a*.6;gx.stroke();
+    }
+    gx.globalAlpha=a;
+    gx.beginPath();gx.arc(p.x,p.y,p.r,0,Math.PI*2);gx.fill();
+    gx.restore();
+  });
+  requestAnimationFrame(loop);
+})();
+
+/* countdown */
+const ev=new Date('2025-06-14T20:30:00');
+function upCD(){
+  let d=ev-new Date();if(d<0)d=0;
+  document.getElementById('cd-d').textContent=String(Math.floor(d/86400000)).padStart(2,'0');
+  document.getElementById('cd-h').textContent=String(Math.floor((d%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(Math.floor((d%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(Math.floor((d%60000)/1000)).padStart(2,'0');
+}
+upCD();setInterval(upCD,1000);
+
+/* modal */
+function openModal(){document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal()});
+
+/* rsvp */
+function submitRsvp(){
+  const n=document.getElementById('rn').value.trim(),a=document.getElementById('ra').value;
+  if(!n||!a){alert('Completá tu nombre y si asistís.');return}
+  const q=document.getElementById('rq').value,f=document.getElementById('rf').value,m=document.getElementById('rm').value;
+  window.open(`https://wa.me/5493814000000?text=${encodeURIComponent(`15 de Valentina 🪩\nNombre: ${n}\nAsistencia: ${a==='si'?'✅ Sí voy':'❌ No puedo'}\nPersonas: ${q}\nRest: ${f||'—'}\nMensaje: ${m||'—'}`)}`, '_blank');
+  document.getElementById('rsvp-wrap').style.display='none';
+  document.getElementById('rsvp-ok').style.display='block';
+  document.getElementById('rom').textContent=`¡Gracias, ${n}! Tu asistencia fue confirmada 🪩`;
+}
+
+/* youtube */
+let isPlaying=false;
+function toggleMusic(){
+  const btn=document.getElementById('mbtn'),lbl=document.getElementById('mlbl'),p=document.getElementById('yt-player');
+  if(!isPlaying){
+    isPlaying=true;
+    p.src=`https://www.youtube-nocookie.com/embed/9eprwBpGA6E?autoplay=1&loop=1&playlist=9eprwBpGA6E&controls=0&rel=0&modestbranding=1`;
+    btn.classList.add('playing');btn.textContent='🎼';
+    lbl.textContent='♪ Reproduciendo...';lbl.classList.add('show');
+    setTimeout(()=>lbl.classList.remove('show'),3000);
+  } else {
+    isPlaying=false;p.src='';
+    btn.classList.remove('playing');btn.textContent='🎵';
+  }
+}
+setTimeout(()=>{const l=document.getElementById('mlbl');l.classList.add('show');setTimeout(()=>l.classList.remove('show'),3500);},2500);
+</script>
+</body>
+</html>
